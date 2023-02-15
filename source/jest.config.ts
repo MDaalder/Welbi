@@ -72,8 +72,8 @@ export default {
 
   // An array of directory names to be searched recursively up from the requiring module's location
   moduleDirectories: [
-    "node_modules",
-    "source",
+    'node_modules',
+    'source',
   ],
 
   // An array of file extensions your modules use
@@ -101,7 +101,7 @@ export default {
   // notifyMode: "failure-change",
 
   // A preset that is used as a base for Jest's configuration
-  preset: "ts-jest",
+  preset: 'ts-jest',
 
   // Run tests from one or more projects
   // projects: undefined,
@@ -193,4 +193,4 @@ export default {
 
   // Whether to use watchman for file crawling
   // watchman: true,
-};
+}

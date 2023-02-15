@@ -1,5 +1,5 @@
-import {JsonResident} from "../domain/models/Resident";
-import {JsonProgram} from "../domain/models/Program";
+import {JsonResident} from '../domain/models/Resident';
+import {JsonProgram} from '../domain/models/Program';
 
 interface RawWelbiData {
   residents: JsonResident[],

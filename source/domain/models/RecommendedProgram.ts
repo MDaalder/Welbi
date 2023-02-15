@@ -1,5 +1,5 @@
-import {SimplifiedProgram} from "./Program";
-import {Resident} from "./Resident";
+import {SimplifiedProgram} from './Program'
+import {Resident} from './Resident'
 
 export interface RecommendedProgram {
   program: SimplifiedProgram,

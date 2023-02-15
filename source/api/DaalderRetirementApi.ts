@@ -1,11 +1,11 @@
-import {ResidentRepository} from "../infrastructure/ResidentModel";
-import {ProgramRepository} from "../infrastructure/ProgramModel";
-import {Program, SimplifiedProgram} from "../domain/models/Program";
-import {Resident} from "../domain/models/Resident";
-import {ProgramMode} from "../domain/models/ProgramMode";
-import {LevelOfCare} from "../domain/models/LevelOfCare";
-import {Gender} from "../domain/models/Gender";
-import {RecommendedProgram} from "../domain/models/RecommendedProgram";
+import {ResidentRepository} from '../infrastructure/ResidentModel'
+import {ProgramRepository} from '../infrastructure/ProgramModel'
+import {Program, SimplifiedProgram} from '../domain/models/Program'
+import {Resident} from '../domain/models/Resident'
+import {ProgramMode} from '../domain/models/ProgramMode'
+import {LevelOfCare} from '../domain/models/LevelOfCare'
+import {Gender} from '../domain/models/Gender'
+import {RecommendedProgram} from '../domain/models/RecommendedProgram'
 
 export class DaalderRetirementApi {
   residentRepository: ResidentRepository
@@ -24,22 +24,22 @@ export class DaalderRetirementApi {
     endDate?: Date,
   ): RecommendedProgram[] | string {
     try {
-      const allPrograms: Program[] = this.programRepository.getAllPrograms();
-      const allResidents: Resident[] = this.residentRepository.getAllResidents();
+      const allPrograms: Program[] = this.programRepository.getAllPrograms()
+      const allResidents: Resident[] = this.residentRepository.getAllResidents()
 
-      const residentsAttendingPrograms: Resident['userId'][] = this.getResidentsAttendingGroupPrograms(allPrograms, startDate, endDate);
-      const isolatedResidents: Resident[] = allResidents.filter(resident => !residentsAttendingPrograms.includes(resident.userId));
+      const residentsAttendingPrograms: Resident['userId'][] = this.getResidentsAttendingGroupPrograms(allPrograms, startDate, endDate)
+      const isolatedResidents: Resident[] = allResidents.filter(resident => !residentsAttendingPrograms.includes(resident.userId))
 
       if (!isolatedResidents.length) {
-        return 'There are no isolated residents for this time period!';
+        return 'There are no isolated residents for this time period!'
       }
 
       // Map of unique simplified programs, keyed by creating a string of the program's fields
       // Created to shorten the number of elements looped over in later computations
-      const uniqueProgramsMap: Map<string, SimplifiedProgram> = this.getUniquePrograms(allPrograms);
+      const uniqueProgramsMap: Map<string, SimplifiedProgram> = this.getUniquePrograms(allPrograms)
 
-      const sortedProgramsMatchedToResidents: [SimplifiedProgram, Resident[]][] = this.matchResidentsToPrograms(isolatedResidents, uniqueProgramsMap);
-      const recommendedPrograms: [SimplifiedProgram, Resident[]][] = this.getRecommendedPrograms(sortedProgramsMatchedToResidents);
+      const sortedProgramsMatchedToResidents: [SimplifiedProgram, Resident[]][] = this.matchResidentsToPrograms(isolatedResidents, uniqueProgramsMap)
+      const recommendedPrograms: [SimplifiedProgram, Resident[]][] = this.getRecommendedPrograms(sortedProgramsMatchedToResidents)
 
       return recommendedPrograms.slice(0, 3).map( ([program, residents]) => {
         return {
@@ -47,14 +47,14 @@ export class DaalderRetirementApi {
           numEngagedResidents: residents.length,
           totalIsolatedResidents: isolatedResidents.length,
           engagedResidents: residents,
-        } as RecommendedProgram;
-      });
+        } as RecommendedProgram
+      })
     }
     catch(error) {
-      console.error(error);
-      throw new Error('Something bad happened');
+      console.error(error)
+      throw new Error('Something bad happened')
     }
-  };
+  }
 
   private mapKey = (program: SimplifiedProgram): string => {
     return `${program.name}-${program.mode}-${program.hobbies}-${program.levelsOfCare}`
@@ -69,24 +69,24 @@ export class DaalderRetirementApi {
     const attendeeIds: Set<Resident['userId']> = programs.reduce( (acc: Set<Resident['userId']>, program) => {
       if (program.mode !== ProgramMode.ONEONONE && program.start > startDate && program.end < endDate) {
         program.attendees.forEach( (attendee: { userId: string }) => {
-          acc.add(attendee.userId);
-        });
+          acc.add(attendee.userId)
+        })
       }
 
       return acc
-    }, new Set<Resident['userId']>());
+    }, new Set<Resident['userId']>())
 
-    return Array.from(attendeeIds);
+    return Array.from(attendeeIds)
   }
 
   private getUniquePrograms(
     programs: Program[],
   ): Map<string, SimplifiedProgram> {
-    const uniqueProgramsMap = new Map<string, SimplifiedProgram>();
+    const uniqueProgramsMap = new Map<string, SimplifiedProgram>()
 
     programs.forEach( program => {
       if (program.mode !== ProgramMode.ONEONONE) {
-        const key = this.mapKey(program);
+        const key = this.mapKey(program)
 
         if (!uniqueProgramsMap.has(key)) {
           uniqueProgramsMap.set(key, {
@@ -98,9 +98,9 @@ export class DaalderRetirementApi {
           })
         }
       }
-    });
+    })
 
-    return uniqueProgramsMap;
+    return uniqueProgramsMap
   }
 
   private matchResidentsToPrograms(
@@ -108,7 +108,7 @@ export class DaalderRetirementApi {
     uniqueProgramsMap: Map<string, SimplifiedProgram>,
   ): [SimplifiedProgram, Resident[]][] {
     // Array of objects created each time a program matches to a unique resident based on their level of care and hobbies
-    const engagingPrograms: ({ program: SimplifiedProgram, resident: Resident })[] = [];
+    const engagingPrograms: ({ program: SimplifiedProgram, resident: Resident })[] = []
 
     for (const resident of residents) {
       for (const [_, program] of uniqueProgramsMap) {
@@ -120,12 +120,12 @@ export class DaalderRetirementApi {
               if (program.name.includes("Men's")) {
                 resident.gender === Gender.Male
                   ? engagingPrograms.push({program, resident})
-                  : undefined;
-                break;
+                  : undefined
+                break
               }
 
-              engagingPrograms.push({program, resident});
-              break;
+              engagingPrograms.push({program, resident})
+              break
             }
           }
         }
@@ -139,14 +139,14 @@ export class DaalderRetirementApi {
           ? [...count[this.mapKey(curr.program)], curr.resident]
           : [curr.resident]
 
-        return count;
-      }, {});
+        return count
+      }, {})
 
     // Programs sorted by the number of residents they appeal to
     return Object.entries(residentsMatchedToUniquePrograms)
       .sort((a, b) => b[1].length - a[1].length).map(([mapKey, residentArr]) => {
         return [uniqueProgramsMap.get(mapKey) as SimplifiedProgram, residentArr]
-      });
+      })
   }
 
   private getRecommendedPrograms(
@@ -161,8 +161,8 @@ export class DaalderRetirementApi {
           return acc
         }
 
-        const currName = curr[0].name;
-        const lastAccName = acc[acc.length - 1][0].name;
+        const currName = curr[0].name
+        const lastAccName = acc[acc.length - 1][0].name
 
         if (
           currName && lastAccName && !currName.includes('Entertainment') &&
@@ -174,10 +174,10 @@ export class DaalderRetirementApi {
           return acc
         }
 
-        acc.push(curr);
+        acc.push(curr)
         return acc
     }, [sortedPrograms[0]])
 
-    return recommendedPrograms;
+    return recommendedPrograms
   }
 }

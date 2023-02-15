@@ -1,5 +1,5 @@
-import {LevelOfCare} from "./LevelOfCare";
-import {ProgramMode} from "./ProgramMode";
+import {LevelOfCare} from './LevelOfCare'
+import {ProgramMode} from './ProgramMode'
 
 export interface Program {
   id: string,

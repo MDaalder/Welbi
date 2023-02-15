@@ -1,5 +1,5 @@
-import {LevelOfCare} from "./LevelOfCare";
-import {Gender} from "./Gender";
+import {LevelOfCare} from './LevelOfCare'
+import {Gender} from './Gender'
 
 export interface Resident {
   userId: string,

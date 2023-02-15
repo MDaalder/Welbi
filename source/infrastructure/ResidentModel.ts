@@ -1,5 +1,5 @@
-import {jsonResidentToDomain, Resident} from "../domain/models/Resident";
-import {rawResidentAndProgramData} from "./rawData";
+import {jsonResidentToDomain, Resident} from '../domain/models/Resident'
+import {rawResidentAndProgramData} from './rawData'
 
 export interface ResidentRepository {
   getAllResidents(): Resident[];
@@ -8,6 +8,6 @@ export interface ResidentRepository {
 export class ResidentModel implements ResidentRepository {
   getAllResidents(): Resident[] {
     return [...rawResidentAndProgramData.residents]
-      .map(resident => jsonResidentToDomain(resident));
-  };
+      .map(resident => jsonResidentToDomain(resident))
+  }
 }
