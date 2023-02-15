@@ -17,7 +17,7 @@ To run the program, type in the terminal:
 
 To get the results of this first system, visit `http://localhost:3000/daalder-retirement/isolated-residents`.
 
-Optional `startDate` and `endDate` parameters can be added to the url to search for isolated residents between the given dates. 
+Optional `startDate` and `endDate` parameters can be added to the url to search for isolated residents between the given dates. They should be acceptable Date inputs. 
 For example: `http://localhost:3000/daalder-retirement/isolated-residents?startDate=2022-06-20T01:00:00.000Z&endDate=2022-06-29T01:00:00.000Z`
 
 If I had more time:
